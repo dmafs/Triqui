@@ -1,5 +1,8 @@
-import { useState  } from "react"; 
+import { useState, useEffect  } from "react"; 
 import Board from "./components/Board";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 function calculateWinner(squares){
@@ -30,9 +33,29 @@ function calculateWinner(squares){
 function App() {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [isXNext, setIsXNext] = useState(true);
+
     const winner = calculateWinner(squares);
     const isDraw = squares.every(square => square !== null) && !winner;
 
+
+    useEffect(() => {
+        if (winner) {
+          toast.success(` Ganó el jugador ${winner}`, {
+            position: "top-right",
+            autoClose: 2500,
+            hideProgressBar: false
+          });
+        }
+      
+        if (isDraw) {
+          toast.info("🤝 Empate", {
+            position: "top-right",
+            autoClose: 2500
+          });
+        }
+      }, [winner, isDraw]);
+
+      
 
     function hndleSquareClick(index){
         if (squares[index] || winner)return; 
@@ -42,8 +65,15 @@ function App() {
 
         setSquares(newSquares); 
         setIsXNext(!isXNext);
+        toast.dismiss();
 
     }
+
+    function handleReset() {
+        setSquares(Array(9).fill(null));
+        setIsXNext(true);
+        toast.dismiss();
+      }
 
   return (
     <div
@@ -72,23 +102,22 @@ function App() {
       />
 
 <button
-  onClick={() => {
-    setSquares(Array(9).fill(null));
-    setIsXNext(true);
-  }}
-  style={{
-    marginTop: "20px",
-    padding: "8px 16px",
-    fontSize: "1rem",
-    cursor: "pointer",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "#ffffff"
-  }}
->
-  Reiniciar juego
-</button>
+        onClick={handleReset}
+        style={{
+          marginTop: "20px",
+          padding: "8px 16px",
+          fontSize: "1rem",
+          cursor: "pointer",
+          borderRadius: "8px",
+          border: "none",
+          backgroundColor: "#2563eb",
+          color: "#ffffff"
+        }}
+      >
+        Reiniciar juego
+      </button>
+
+      <ToastContainer />
 
     </div>
   );    
