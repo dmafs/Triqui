@@ -33,32 +33,37 @@ function calculateWinner(squares){
 function App() {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [isXNext, setIsXNext] = useState(true);
+    
+const winner = calculateWinner(squares);
+const isDraw = squares.every(square => square !== null) && !winner;
 
-    const winner = calculateWinner(squares);
-    const isDraw = squares.every(square => square !== null) && !winner;
+const gameStatus = winner
+  ? "win"
+  : isDraw
+  ? "draw"
+  : "playing";
 
-
-    useEffect(() => {
-        if (winner) {
-          toast.success(` Ganó el jugador ${winner}`, {
-            position: "top-right",
-            autoClose: 2500,
-            hideProgressBar: false
-          });
-        }
+useEffect(() => {
+    if (winner) {
+      toast.success(`🎉 Ganó el jugador ${winner}`, {
+        position: "top-right",
+        autoClose: 2500
+      });
+      return;
+    }
+  
+    if (isDraw) {
+      toast.info("🤝 Empate", {
+        position: "top-right",
+        autoClose: 2500
+      });
+    }
+  }, [winner, isDraw]);
       
-        if (isDraw) {
-          toast.info("🤝 Empate", {
-            position: "top-right",
-            autoClose: 2500
-          });
-        }
-      }, [winner, isDraw]);
-
       
 
     function hndleSquareClick(index){
-        if (squares[index] || winner)return; 
+        if (squares[index] || gameStatus)return; 
 
         const newSquares =[...squares]; 
         newSquares[index] = isXNext ? "X" : "O"; 
@@ -72,6 +77,7 @@ function App() {
     function handleReset() {
         setSquares(Array(9).fill(null));
         setIsXNext(true);
+        gameStatus("playing");
         toast.dismiss();
       }
 
@@ -87,9 +93,9 @@ function App() {
     >
       <h1 style={{ marginBottom: "10px" }}>Triqui - React</h1>
       <p style ={{marginBottom: "20px"}}>
-      {winner && <strong>Ganador: {winner}</strong>}
-      {isDraw && <strong>Empate </strong>}
-      {!winner && !isDraw && (
+      {gameStatus === "win" && <strong>Ganador: {winner}</strong>}
+      {gameStatus === "draw" && <strong>Empate </strong>}
+      {!winner === "playing" && !isDraw && (
         <>
         Turno: <strong>{isXNext ? "X" : "O"}</strong>
         </>
