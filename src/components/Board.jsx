@@ -1,18 +1,14 @@
 import Square from "./Square";
+import "../styles/Board.css";
 
-function Board({ squares, onSquareClick }) {
+function Board({ squares, onSquareClick, winningLine }) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 80px)",
-        gap: "5px"
-      }}
-    >
+    <div className="board">
       {squares.map((value, index) => (
         <Square
           key={index}
           value={value}
+          isWinning={winningLine?.includes(index)}
           onClick={() => onSquareClick(index)}
         />
       ))}

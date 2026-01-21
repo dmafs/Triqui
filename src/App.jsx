@@ -17,15 +17,13 @@ function calculateWinner(squares){
         [0,4,8],
         [2,4,6],
     ];
-    for (let  i = 0 ; i < lines.length; i++){
-        const [a,b,c] = lines[i];
-        if(
-            squares[a] &&
-            squares[a] === squares[b] &&
-            squares[a] === squares[c]
-        ){
-            return squares[a];
-        }
+    for (let line of lines) {
+      const [a, b, c] = line;
+      if (squares[a] &&
+          squares[a] === squares[b] &&
+          squares[a] === squares[c]) {
+        return { player: squares[a], line };
+      }
     }
     return null;
 }
@@ -34,7 +32,10 @@ function App() {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [isXNext, setIsXNext] = useState(true);
     
-const winner = calculateWinner(squares);
+    const result = calculateWinner(squares);
+    const winner = result?.player;
+    const winningLine = result?.line;
+    
 const isDraw = squares.every(square => square !== null) && !winner;
 
 const gameStatus = winner
@@ -63,7 +64,7 @@ useEffect(() => {
       
 
     function hndleSquareClick(index){
-        if (squares[index] || gameStatus)return; 
+        if (squares[index] || gameStatus !== "playing")return; 
 
         const newSquares =[...squares]; 
         newSquares[index] = isXNext ? "X" : "O"; 
@@ -105,6 +106,7 @@ useEffect(() => {
       <Board
         squares={squares}
         onSquareClick={hndleSquareClick}
+        winningLine={winningLine}
       />
 
 <button
